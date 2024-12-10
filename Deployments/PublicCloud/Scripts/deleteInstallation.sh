@@ -1,27 +1,25 @@
 #!/bin/bash
-set -e
+#set -e
 
 # MUST be set in environment variable
 # CLUSTER_CRN=""
-# NEED to change this according to your cdp.sh location. Better to give full path. Don't put any / at the end
-# example ~/Documents/thunderhead/clients/cdpcli
-# CDP_PATH=""
-# CDP_PROFILE=""
-
+# KUBECONFIG=""
 
 # OPTIONAL VARIABLES in environment  - with default value
+# CDP_PROFILE=""
 l_CSS_NAMESPACE=${CSS_NAMESPACE:-"css"}
 
 CLUSTER_VERSION=0
 PROFILE_TEXT="--profile $CDP_PROFILE"
 
 echo "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-if [ -z "$CLUSTER_CRN" ] || [ -z "$CDP_PATH" ] || [ -z "$KUBECONFIG" ]; then
+if [ -z "$CLUSTER_CRN" ] || [ -z "$KUBECONFIG" ]; then
   echo "Variable CLUSTER_CRN, CDP_PATH, KUBECONFIG must be set"
+  echo " "
+  echo "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
   exit 1
 else
   echo "CLUSTER_CRN value is $CLUSTER_CRN"
-  echo "CDP_PATH value is $CDP_PATH"
   echo "KUBECONFIG value is $KUBECONFIG"
 fi
 
@@ -41,7 +39,7 @@ echo "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 # setting the cluster version
 set_cluster_version() {
-  local command="$CDP_PATH/cdp.sh compute describe-cluster --cluster-crn $CLUSTER_CRN "
+  local command="cdp compute describe-cluster --cluster-crn $CLUSTER_CRN "
   if [ -n "$CDP_PROFILE" ]; then
     command="$command $PROFILE_TEXT"
   fi
@@ -52,7 +50,7 @@ set_cluster_version() {
 
 # verify the cluster state, and wait until it is in running state
 verify_running() {
-  local command="$CDP_PATH/cdp.sh compute describe-cluster --cluster-crn $CLUSTER_CRN"
+  local command="cdp compute describe-cluster --cluster-crn $CLUSTER_CRN"
   if [ -n "$CDP_PROFILE" ]; then
     command="$command $PROFILE_TEXT"
   fi
@@ -106,7 +104,7 @@ delete_helm_charts() {
 delete_instancegroup() {
   set_cluster_version
   local instance_group_name="$1"
-  local command="$CDP_PATH/cdp.sh compute delete-instance-group --cluster-crn $CLUSTER_CRN --instance-group-name $instance_group_name --cluster-state-version $CLUSTER_VERSION"
+  local command="cdp compute delete-instance-group --cluster-crn $CLUSTER_CRN --instance-group-name $instance_group_name --cluster-state-version $CLUSTER_VERSION"
   if [ -n "$CDP_PROFILE" ]; then
     command="$command $PROFILE_TEXT"
   fi
@@ -117,7 +115,7 @@ delete_instancegroup() {
 }
 
 delete_cluster() {
-  local command="$CDP_PATH/cdp.sh compute delete-cluster --cluster-crn $CLUSTER_CRN"
+  local command="cdp compute delete-cluster --cluster-crn $CLUSTER_CRN"
   if [ -n "$CDP_PROFILE" ]; then
     command="$command $PROFILE_TEXT"
   fi

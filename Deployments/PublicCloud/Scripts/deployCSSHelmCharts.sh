@@ -14,10 +14,6 @@ set -e
 # MUST be set in environment variable
 # CLUSTER_CRN=""
 # HELM_CHARTS_DIRECTORY=""
-# NEED to set this according to your cdp.sh location. Better to give full path. Don't put any / at the end
-# example ~/Documents/thunderhead/clients/cdpcli
-# CDP_PATH=""
-
 
 # OPTIONAL VARIABLES in environment - with default value
 # CDP_PROFILE=""
@@ -36,13 +32,14 @@ kubeconfigfilearchive="$HOME/.kube/script-config-archive"
 # REPOSITORY_URL="$REPOSITORY_BASE_URL/$CSS_REPO_PATH/"
 
 echo "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-if [ -z "$CLUSTER_CRN" ] || [ -z "$HELM_CHARTS_DIRECTORY" ] || [ -z {$CDP_PATH} ]; then
-  echo "Variable CLUSTER_CRN, HELM_CHARTS_DIRECTORY, CDP_PATH must be set"
+if [ -z "$CLUSTER_CRN" ] || [ -z "$HELM_CHARTS_DIRECTORY" ]; then
+  echo "Variable CLUSTER_CRN, HELM_CHARTS_DIRECTORY must be set"
+  echo " "
+  echo "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
   exit 1
 else
   echo "CLUSTER_CRN value is => $CLUSTER_CRN"
   echo "HELM_CHARTS_DIRECTORY value is => $HELM_CHARTS_DIRECTORY"
-  echo "CDP_PATH value is $CDP_PATH"
 fi
 
 if [ -z "$CDP_PROFILE" ]; then
@@ -85,9 +82,9 @@ generate_kubeconfig() {
   fi
   local command=""
   if [ -n "$CDP_PROFILE" ]; then
-    command="$CDP_PATH/cdp.sh compute get-kube-config --cluster-crn $CLUSTER_CRN --service computex --namespace computex  $PROFILE_TEXT | jq -r '.content' | sed 's/\\n/\n/g' > $kubeconfigfile"
+    command="cdp compute get-kube-config --cluster-crn $CLUSTER_CRN --service computex --namespace computex  $PROFILE_TEXT | jq -r '.content' | sed 's/\\n/\n/g' > $kubeconfigfile"
   else
-    command="$CDP_PATH/cdp.sh compute get-kube-config --cluster-crn $CLUSTER_CRN --service computex --namespace computex | jq -r '.content' | sed 's/\\n/\n/g' > $kubeconfigfile"
+    command="cdp compute get-kube-config --cluster-crn $CLUSTER_CRN --service computex --namespace computex | jq -r '.content' | sed 's/\\n/\n/g' > $kubeconfigfile"
   fi
 
   echo "XXXX----------------------------------------------------------------------------------------------------------------------------------------XXXX"
@@ -189,6 +186,7 @@ install_charts
 echo "XX==========================================================================XX==============================================================================XX"
 echo "  CSS Helm charts are deployed successfully, kubeconfig file availaible at $kubeconfigfile, Please follow rest of the instructions."
 echo "  You can query the open search endpoint now, below is the example"
-echo "  curl -k 'http://<EXTERNAL_IP>:9200/_cat/indices' -u admin:$l_ADMIN_PASSWORD"
-echo "  You may need to do port forward for the dashboard to access, command => kubectl port-forward service/opensearch-dashboards 5601 -n css"
+echo "  curl -k 'http://<DATA_EXTERNAL_IP>:9200/_cat/indices' -u admin:$l_ADMIN_PASSWORD"
+echo "  You can access dashboard in your browser by accessing this url => http://<DASHBOARD_EXTERNAL_IP>:5601"
+echo "  For accessing Dashboard username: admin, password: $l_ADMIN_PASSWORD"
 echo "XX==========================================================================XX==============================================================================XX"

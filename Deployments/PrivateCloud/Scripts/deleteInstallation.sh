@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+#set -e
 
 # MUST be set in environment variable
 # KUBECONFIG

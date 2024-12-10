@@ -12,9 +12,6 @@ set -e
 
 # ENVIRONMENT_CRN=""
 # CLUSTER_NAME=""
-# NEED to set this according to your cdp.sh location. Better to give full path. Don't put any / at the end
-# example ~/Documents/thunderhead/clients/cdpcli
-# CDP_PATH=""
 #
 
 # OPTIONAL
@@ -27,13 +24,14 @@ PROFILE_TEXT="--profile $CDP_PROFILE"
 CU_KMS_KEY_ARN=""
 
 echo "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-if [ -z "$ENVIRONMENT_CRN" ] || [ -z "$CLUSTER_NAME" ] || [ -z "$CDP_PATH" ]; then
-  echo "Variable ENVIRONMENT_CRN, CLUSTER_NAME, CDP_PATH must be set"
+if [ -z "$ENVIRONMENT_CRN" ] || [ -z "$CLUSTER_NAME" ]; then
+  echo "Variable ENVIRONMENT_CRN, CLUSTER_NAME must be set"
+  echo " "
+  echo "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
   exit 1
 else
   echo "ENVIRONMENT_CRN value is $ENVIRONMENT_CRN"
   echo "CLUSTER_NAME value is $CLUSTER_NAME"
-  echo "CDP_PATH value is $CDP_PATH"
 fi
 
 if [ -z "$CDP_PROFILE" ]; then
@@ -52,7 +50,7 @@ echo "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 # setting the cluster version
 set_cluster_version() {
-  local command="$CDP_PATH/cdp.sh compute describe-cluster --cluster-crn $CLUSTER_CRN"
+  local command="cdp compute describe-cluster --cluster-crn $CLUSTER_CRN"
   if [ -n "$CDP_PROFILE" ]; then
     command="$command $PROFILE_TEXT"
   fi
@@ -65,7 +63,7 @@ set_cluster_version() {
 }
 
 set_kms_key() {
-  local command="$CDP_PATH/cdp.sh compute describe-cluster --cluster-crn $CLUSTER_CRN"
+  local command="cdp compute describe-cluster --cluster-crn $CLUSTER_CRN"
   if [ -n "$CDP_PROFILE" ]; then
     command="$command $PROFILE_TEXT"
   fi
@@ -79,7 +77,7 @@ set_kms_key() {
 
 # creating the compute cluster
 create_cluster() {
-  local command="$CDP_PATH/cdp.sh compute create-cluster --environment $ENVIRONMENT_CRN --name $CLUSTER_NAME"
+  local command="cdp compute create-cluster --environment $ENVIRONMENT_CRN --name $CLUSTER_NAME"
   if [ -n "$CDP_PROFILE" ]; then
     command="$command $PROFILE_TEXT"
   fi
@@ -99,7 +97,7 @@ create_cluster() {
 
 # verify the cluster state, and wait until it is in running state
 verify_running() {
-  local command="$CDP_PATH/cdp.sh compute describe-cluster --cluster-crn $CLUSTER_CRN"
+  local command="cdp compute describe-cluster --cluster-crn $CLUSTER_CRN"
   if [ -n "$CDP_PROFILE" ]; then
     command="$command $PROFILE_TEXT "
   fi
@@ -116,7 +114,7 @@ verify_running() {
 
 # creating the required liftie instance group 3 masters and 1 data
 create_instancegroup() {
-  local command="$CDP_PATH/cdp.sh compute create-instance-groups --cli-input-json '{
+  local command="cdp compute create-instance-groups --cli-input-json '{
       \"clusterCrn\": \"$CLUSTER_CRN\",
       \"instanceGroups\": [
           {
@@ -158,86 +156,50 @@ create_instancegroup() {
               \"instanceTypes\": [
                   \"m5.xlarge\"
               ]
+          },
+          {
+              \"name\": \"css-ml\",
+              \"instanceCount\": 1,
+              \"autoscaling\": {
+                  \"maxInstance\": 1,
+                  \"minInstance\": 1,
+                  \"enabled\": true
+              },
+              \"instanceTier\": \"ON_DEMAND\",
+              \"labels\": {
+                  \"project\": \"css\",
+                  \"css-node-group\": \"ml\"
+              },
+              \"rootVolume\": {
+                  \"size\": 50
+              },
+              \"instanceTypes\": [
+                  \"m5.xlarge\"
+              ]
+          },
+          {
+              \"name\": \"css-ingest\",
+              \"instanceCount\": 1,
+              \"autoscaling\": {
+                  \"maxInstance\": 1,
+                  \"minInstance\": 1,
+                  \"enabled\": true
+              },
+              \"instanceTier\": \"ON_DEMAND\",
+              \"labels\": {
+                  \"project\": \"css\",
+                  \"css-node-group\": \"ingest\"
+              },
+              \"rootVolume\": {
+                  \"size\": 50
+              },
+              \"instanceTypes\": [
+                  \"m5.xlarge\"
+              ]
           }
       ],
       \"clusterStateVersion\": $CLUSTER_VERSION,
       \"skipValidation\": false
-  }'"
-  if [ -n "$CDP_PROFILE" ]; then
-    command="$command $PROFILE_TEXT"
-  fi
-  echo "XXXX----------------------------------------------------------------------------------------------------------------------------------------XXXX"
-  echo "     Executing >> $command"
-  echo "XXXX----------------------------------------------------------------------------------------------------------------------------------------XXXX"
-  eval $command
-}
-
-# creating the required liftie instance group for ml node
-create_ml_instancegroup() {
-  local command="$CDP_PATH/cdp.sh compute create-instance-groups --cli-input-json '{
-    \"clusterCrn\": \"$CLUSTER_CRN\",
-    \"instanceGroups\": [
-        {
-            \"name\": \"css-ml\",
-            \"instanceCount\": 1,
-            \"autoscaling\": {
-                \"maxInstance\": 1,
-                \"minInstance\": 1,
-                \"enabled\": true
-            },
-            \"instanceTier\": \"ON_DEMAND\",
-            \"labels\": {
-                \"project\": \"css\",
-                \"css-node-group\": \"ml\"
-            },
-            \"rootVolume\": {
-                \"size\": 50
-            },
-            \"instanceTypes\": [
-                \"m5.xlarge\"
-            ]
-        }
-    ],
-    \"clusterStateVersion\": $CLUSTER_VERSION,
-    \"skipValidation\": false
-  }'"
-  if [ -n "$CDP_PROFILE" ]; then
-    command="$command $PROFILE_TEXT"
-  fi
-  echo "XXXX----------------------------------------------------------------------------------------------------------------------------------------XXXX"
-  echo "     Executing >> $command"
-  echo "XXXX----------------------------------------------------------------------------------------------------------------------------------------XXXX"
-  eval $command
-}
-
-# creating the required liftie instance group for ingest node
-create_ingest_instancegroup() {
-  local command="$CDP_PATH/cdp.sh compute create-instance-groups --cli-input-json '{
-    \"clusterCrn\": \"$CLUSTER_CRN\",
-    \"instanceGroups\": [
-        {
-            \"name\": \"css-ingest\",
-            \"instanceCount\": 1,
-            \"autoscaling\": {
-                \"maxInstance\": 1,
-                \"minInstance\": 1,
-                \"enabled\": true
-            },
-            \"instanceTier\": \"ON_DEMAND\",
-            \"labels\": {
-                \"project\": \"css\",
-                \"css-node-group\": \"ingest\"
-            },
-            \"rootVolume\": {
-                \"size\": 50
-            },
-            \"instanceTypes\": [
-                \"m5.xlarge\"
-            ]
-        }
-    ],
-    \"clusterStateVersion\": $CLUSTER_VERSION,
-    \"skipValidation\": false
   }'"
   if [ -n "$CDP_PROFILE" ]; then
     command="$command $PROFILE_TEXT"
@@ -260,7 +222,7 @@ add_authorized_iprange_control_plane(){
     echo "############################# Not able to set CU_KMS_KEY_ARN, Please do it manually to access the control plane services #############################"
     return 0
   fi
-  local command="$CDP_PATH/cdp.sh compute update-cluster --cluster-state-version $CLUSTER_VERSION --cli-input-json '{
+  local command="cdp compute update-cluster --cluster-state-version $CLUSTER_VERSION --cli-input-json '{
    	\"clusterCrn\": \"$CLUSTER_CRN\",
    	\"spec\": {
        	\"security\": {
@@ -294,14 +256,6 @@ set_cluster_version
 create_instancegroup
 sleep 20
 verify_running "Create Instancegroup"
-set_cluster_version
-create_ml_instancegroup
-sleep 20
-verify_running "Create ML Instancegroup"
-set_cluster_version
-create_ingest_instancegroup
-sleep 20
-verify_running "Create INGEST Instancegroup"
 add_authorized_iprange_control_plane
 verify_running "Add Security Block"
 echo "XX======================================================================XX==========================================================================XX"
