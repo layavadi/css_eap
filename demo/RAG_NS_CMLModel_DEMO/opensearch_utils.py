@@ -2,6 +2,8 @@ from opensearchpy import OpenSearch
 from config import Config
 import time
 import json
+from urllib.parse import urlparse
+import re
 
 class OpenSearchUtils:
 
@@ -23,6 +25,8 @@ class OpenSearchUtils:
         # This settings enable ML workloads to run with out any memory limit tripping.
         try:
             # Cluster settings payload
+            base_domain =  urlparse(Config.CSS_EMBEDDING_OPENAI_ENDPOINT).netloc
+            escaped_url = re.sub(r'\.', r'\\.', base_domain)
             settings_payload = {
                     "persistent": {
                         "plugins": {
@@ -31,7 +35,7 @@ class OpenSearchUtils:
                                 "jvm_heap_memory_threshold": "100",
                                 "connector.private_ip_enabled": "true",
                                 "trusted_connector_endpoints_regex": [
-                                     "^https://caii-prod-long-running\\.eng-ml-l\\.vnu8-sqze\\.cloudera\\.site/.*$"
+                                     f"^https://{escaped_url}/.*$"
                                 ]
                             }
                         }
