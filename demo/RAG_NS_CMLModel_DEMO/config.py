@@ -17,9 +17,9 @@ class Config:
     CSS_EMBEDDING_OPENAI_DIMENSION = os.getenv("CSS_EMBEDDING_DIMENSION")
     INDEX_NAME = "prod_docs_index"
     NS_PIPELINE = "neural-search-pipeline"
-    CSS_EMBEDDING_MODEL = "OpenAI_embedding_model"
+    CSS_EMBEDDING_MODEL = "CML_embedding_model"
     CSS_SSL = os.getenv("CSS_SSL","False")
-    CSS_CONNECTOR_NAME = 'CSS_openAPI_connector'
+    CSS_CONNECTOR_NAME = 'CSS_CML_connector'
     INDEX_SETTINGS = {
                 "settings": {
                     "index": {
