@@ -25,7 +25,7 @@ if __name__ == "__main__":
     print(f"The function took {execution_time:.2f} seconds to complete the load.")
 
     # Convert user query to vector and search in OpenSearch
-    query = "dog"
+    query = "sunset"
     results = client.search_by_neural(query)
 
     print("Answer:", results)
