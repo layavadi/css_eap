@@ -21,9 +21,8 @@ class OpenSearchUtils:
                     ssl_show_warn=False
                 )
             print("Connected to OpenSearch!")
-            self.model_id = None
             self.device = "cuda" if torch.cuda.is_available() else "cpu"
-            self.model, self.preprocess = clip.load("ViT-B/32", device=self.device)
+            self.model, self.preprocess = clip.load(Config.CSS_EMBEDDING_MODEL, device=self.device)
         except Exception as e:
             print(f"Error connecting to OpenSearch: {e}")
             self.clinet = ''

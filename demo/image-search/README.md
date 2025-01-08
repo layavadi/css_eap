@@ -1,4 +1,4 @@
-This program processes images in a specified location, stores them in an Cloudera Semantic Search(CSS) with vector embeddings, and enables to search the images as per user's query.
+This program processes images in a specified location, stores them in an Cloudera Semantic Search(CSS) with vector embeddings, and enables to search the images as per user's query using clip's ViT/B-32 model.
 
 - **This demo needs nodes having following roles**
     - data
