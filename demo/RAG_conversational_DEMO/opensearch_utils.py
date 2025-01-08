@@ -37,6 +37,7 @@ class OpenSearchUtils:
                                 "native_memory_threshold": "100",
                                 "jvm_heap_memory_threshold": "100",
                                 "connector.private_ip_enabled": "true",
+                                "model_access_control_enabled": "false",
                                 "trusted_connector_endpoints_regex": [
                                      f"^https://{embedding_escaped_url}/.*$",
                                      f"^https://{inferencing_escaped_url}/.*$"
