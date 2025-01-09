@@ -5,7 +5,6 @@ class Config:
     CSS_PORT = os.getenv("CSS_PORT",9200)
     CSS_USERNAME = os.getenv("CSS_USERNAME","admin")
     CSS_PASSWORD = os.getenv("CSS_PASSWORD","admin")
-    DATA_FILE_PATH = os.getenv("DOC_PATH",'data')
     INDEX_NAME = "image_docs_index"
     CSS_EMBEDDING_MODEL = "ViT-B/32"
     CSS_SSL = os.getenv("CSS_SSL","False")

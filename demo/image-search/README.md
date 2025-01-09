@@ -18,7 +18,6 @@ Set the following environment variables in your shell or `.env` file before runn
   - `CSS_PORT`: Port of the OpenSearch server (default: `9200`)
   - `CSS_USER`: Username for OpenSearch authentication
   - `CSS_PASSWORD`: Password for OpenSearch authentication
-  - `DATA_FILE_PATH`: PDF files to load (default: `./data`)
   - `CSS_SSL`:  True if SSL is enabled for CSS connection
   
 
@@ -33,20 +32,12 @@ Set the following environment variables in your shell or `.env` file before runn
    Ensure your Cloudera Semantic search  server is running and accessible at the host and port specified in the environment variables.
 
 2. **Run the Script**:
-   Start the following job for loading the data:
-   ```python
-   python css_load.py 
-   ```
-   This will:
-   - Connect to CSS
-   - Process and store images from the specified directory. Currently there is one only one image in the directory. One can add more to the same directory.
-
    Start the following Application for brining up the search UI:
    ```python
    python search_app.py 
    ```
-
-    Run  the following Application to do cleanup of index:
+   
+3. Run  the following Application to do cleanup of index:
    ```python
    python clenaup.py 
    ```

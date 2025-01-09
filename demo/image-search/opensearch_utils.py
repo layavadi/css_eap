@@ -57,23 +57,19 @@ class OpenSearchUtils:
             print(f"Index '{Config.INDEX_NAME}' created successfully.")
 
     # Step 3: Insert Embeddings and Text into OpenSearch
-    def insert_document(self):
+    def insert_document(self, image_paths):
         batch_size = 100
         data = []
         # Process images in batches
-        image_dir = Config.DATA_FILE_PATH
-        image_files = os.listdir(image_dir)
-        for i in range(0, len(image_files), batch_size):
-            batch_files = image_files[i:i + batch_size]
-            batch_file_paths = [os.path.join(image_dir, file) for file in batch_files]
+        for i in range(0, len(image_paths), batch_size):
+            batch_file_paths = image_paths[i:i + batch_size]
 
             # Compute embeddings for the batch of images
             batch_embeddings = self.compute_clip_features(batch_file_paths)
 
             # Create data dictionary for indexing
             for file_path, embedding in zip(batch_file_paths, batch_embeddings):
-                image_path = os.path.basename(file_path).replace("!", "/")
-                data.append({'image_path': image_path, 'embedding': embedding})
+                data.append({'image_path': file_path, 'embedding': embedding})
 
             # Check if we have enough data to index
             if len(data) >= batch_size:
@@ -108,7 +104,7 @@ class OpenSearchUtils:
             # Extract image_path from the first hit
             if hits:
                 image_path = hits[0]['_source']['image_path']
-                print(image_path + " score: " + str(hits[0]['_score']))
+                print(os.path.basename(image_path) + " score: " + str(hits[0]['_score']))
                 # Display the image
                 return image_path
             else:
