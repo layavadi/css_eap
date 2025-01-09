@@ -18,6 +18,7 @@ class Config:
                 },
                 "mappings": {
                     "properties": {
+                        "image_path": {"type": "text"},
                         "embedding": {
                             "type": "knn_vector",
                             "dimension": 512
