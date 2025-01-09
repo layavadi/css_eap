@@ -1,0 +1,6 @@
+opensearch-py
+transformers
+torch
+openai-clip
+torchvision
+gradio
