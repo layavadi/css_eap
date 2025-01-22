@@ -30,13 +30,15 @@ class BatchLoader:
         for filename in os.listdir(folder_path):
             if filename.endswith(".pdf"):
                 pdf_path = os.path.join(folder_path, filename)
+                try:
+                    # Iterate through chunks of the PDF
+                    for i, chunk in enumerate(self.chunk_pdf(pdf_path)):
 
-                # Iterate through chunks of the PDF
-                for i, chunk in enumerate(self.chunk_pdf(pdf_path)):
+                        # Create a unique document ID using the file name and chunk index
+                        doc_id = f"{filename}_chunk_{i+1}"
 
-                    # Create a unique document ID using the file name and chunk index
-                    doc_id = f"{filename}_chunk_{i+1}"
-
-                    # Insert chunk and its embedding into OpenSearch
-                    self.opensearch_utils.insert_document(doc_id, chunk)
-                    print(f"Inserted chunk {i+1} of file {filename} ")
+                        # Insert chunk and its embedding into OpenSearch
+                        self.opensearch_utils.insert_document(doc_id, chunk)
+                        print(f"Inserted chunk {i+1} of file {filename} ")
+                except:
+                    print("Exception during processing PDF")
