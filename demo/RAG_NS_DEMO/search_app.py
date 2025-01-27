@@ -3,7 +3,7 @@ from opensearch_utils import OpenSearchUtils
 import gradio as gr
 import query_llm
 from config import Config
-import json
+import os
 
 
 def handle_user_query(query, client):
@@ -120,6 +120,6 @@ if __name__ == "__main__":
 
     try:
         gradio_app = create_gradio_ui()
-        gradio_app.launch(share=True)
+        gradio_app.launch(server_port=int(os.getenv("CDSW_APP_PORT","7860")),share=True)
     except Exception as e:
         print(f"Error occurred: {e}")

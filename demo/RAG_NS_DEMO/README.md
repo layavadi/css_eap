@@ -25,6 +25,8 @@ Set the following environment variables in your shell or `.env` file before runn
   - `CSS_OPENAI_MODEL` : OpenAI model for LLM Chat
   - `CSS_OPENAI_ENDPOINT` : OpenAI model servicing Endpoint
   - `CSS_SSL`:  True if SSL is enabled for CSS connection
+   - `CSS_INDEX_NAME` : Index name of vectors 
+  - `CSS_NS_PIPELINE`:  Name of Neural pipeline
   
 
 2. **Install Dependencies**:

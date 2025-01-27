@@ -48,6 +48,14 @@ environment_variables:
     default: './data'
     description: >-
       PDF files for loading it into the CSS
+  CSS_INDEX_NAME:
+    default: 'prod_docs_index'
+    description: >-
+      PDF files for loading it into the CSS
+  CSS_NS_PIPELINE:
+    default: 'neural-search-pipeline'
+    description: >-
+      PDF files for loading it into the CSS
 
 runtimes:
   - editor: PBJ Workbench
@@ -62,7 +70,7 @@ tasks:
     short_summary: Install Dependencies
     kernel: python3
     cpu: 2
-    memory: 10
+    memory: 4
 
   - type: create_job
     name: Load Data From PDF File
