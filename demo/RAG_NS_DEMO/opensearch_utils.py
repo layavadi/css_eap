@@ -166,7 +166,7 @@ class OpenSearchUtils:
             print(f"Pipeline '{pipeline_id}' exists.")
             return True
         except Exception as e:
-            print("Pipeline '{pipeline_id}' doesn't exists")
+            print(f"Pipeline '{pipeline_id}' doesn't exists")
             return False
     
     # Create neural pipeline for ingesting vectors into the CSS
