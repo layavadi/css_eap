@@ -51,11 +51,11 @@ environment_variables:
   CSS_INDEX_NAME:
     default: 'prod_docs_index'
     description: >-
-      PDF files for loading it into the CSS
+      Index name for the verctor store
   CSS_NS_PIPELINE:
     default: 'neural-search-pipeline'
     description: >-
-      PDF files for loading it into the CSS
+      Neural Pipeline name 
 
 runtimes:
   - editor: PBJ Workbench
