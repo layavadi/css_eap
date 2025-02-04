@@ -28,7 +28,8 @@ class OpenSearchUtils:
                         "plugins": {
                             "ml_commons": {
                                 "native_memory_threshold": "100",
-                                "jvm_heap_memory_threshold": "100"
+                                "jvm_heap_memory_threshold": "100",
+                                "model_access_control_enabled": "false"
                             }
                         }
                     }

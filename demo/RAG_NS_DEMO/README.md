@@ -4,7 +4,8 @@ This program processes PDF documents in a specified location, stores them in an 
     - data
     - ingest
     - ml
-
+Make sure to turn off the security check for system indices in opensearch.yml by setting
+`plugins.security.system_indices.enabled: false`
 
 ## Requirements
 - **Python 3.8+**
